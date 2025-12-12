@@ -3,9 +3,9 @@ import { Button } from '@/components/ui/button';
 
 export default function Dashboard() {
     return (
-        <div>
+        <div className='flex h-screen flex-col'>
             <Navbar />
-            <div className="m-8 flex flex-col gap-3">
+            <div className="mx-8 mt-16 flex flex-col gap-3">
                 <header>
                     <h1 className="text-xl font-semibold">Dashboard</h1>
                     <p>Log-in to access your dashboard.</p>
