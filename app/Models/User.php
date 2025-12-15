@@ -12,6 +12,20 @@ class User extends Model
     protected $table = 'users';
 
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = ['first_name', 'last_name', 'email', 'username', 'password'];
+
+    /**
     * The model's default values for attributes.
     *
     * @var array

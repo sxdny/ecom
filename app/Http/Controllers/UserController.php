@@ -6,6 +6,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -22,9 +23,20 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): RedirectResponse
     {
+        // Using Precognition
         $validated = $request->validated();
 
-        dd($validated);
+        // Once validated, store user with hashed password.
+
+        $user = User::create([
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'email' => $validated['email'],
+            'username' => $validated['username'],
+            'password' => Hash::make($validated['password'])
+        ]);
+        //dd(Hash::make($validated['password']));
+        //dd($validated);
 
         return redirect('/');
     }
