@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Http\Requests\StoreUserRequest;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,4 +22,5 @@ Route::get('/signup', function() {
     return Inertia::render('auth/signup');
 })->name('signup');
 
-Route::post('/submitSignup', [UserController::class, 'store']);
+Route::post('/submitSignup', [UserController::class, 'store'])
+    ->middleware(HandlePrecognitiveRequests::class);

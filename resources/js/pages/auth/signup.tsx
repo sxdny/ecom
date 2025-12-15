@@ -1,25 +1,26 @@
 import Navbar from '@/components/navbar';
 import { Button } from '@/components/ui/button';
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 
 import { useForm } from '@inertiajs/react';
 import { FormEvent } from 'react';
 
 export default function Signup() {
-    // Valores por defecto
-    const { data, setData, post, processing, error, validate } = useForm({
+    /*
+        Form helper con los valores por defecto.
+    */
+    const { data, setData, post, processing, errors, validate, invalid } = useForm({
         first_name: '',
         last_name: '',
         email: '',
         username: '',
         password: '',
         confirmPassword: '',
-    }).withPrecognition('post', '/users');
+    }).withPrecognition('post', '/submitSignup');
 
     function submit(e: FormEvent) {
         e.preventDefault();
-        // validate here the inputs
         post('/submitSignup');
     }
 
@@ -37,10 +38,12 @@ export default function Signup() {
                                     <Input
                                         value={data.first_name}
                                         onChange={(e) => setData('first_name', e.target.value)}
+                                        onBlur={() => validate()}
                                         id="first_name"
                                         autoComplete="off"
                                         placeholder="Sidney"
                                     />
+                                    {invalid('first_name') && <FieldError>{errors.first_name}</FieldError>}
                                 </Field>
                                 <Field>
                                     <FieldLabel htmlFor="last_name">Last name</FieldLabel>
@@ -51,17 +54,20 @@ export default function Signup() {
                                         autoComplete="off"
                                         placeholder="Silva Braz de Oliveira"
                                     />
+                                    {invalid('last_name') && <FieldError>{errors.last_name}</FieldError>}
                                 </Field>
                                 <Field>
                                     <FieldLabel htmlFor="email">Email</FieldLabel>
                                     <Input
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
+                                        onBlur={() => validate()}
                                         type="email"
                                         id="email"
                                         autoComplete="off"
                                         placeholder="sxdny@email.me"
                                     />
+                                    {invalid('email') && <FieldError>{errors.email}</FieldError>}
                                 </Field>
                                 <Field>
                                     <FieldLabel htmlFor="username">Username</FieldLabel>
@@ -72,6 +78,7 @@ export default function Signup() {
                                         autoComplete="on"
                                         placeholder="sxdny"
                                     />
+                                    {invalid('username') && <FieldError>{errors.username}</FieldError>}
                                 </Field>
                                 <Field>
                                     <FieldLabel htmlFor="password">Password</FieldLabel>
@@ -83,6 +90,7 @@ export default function Signup() {
                                         autoComplete="on"
                                     />
                                 </Field>
+                                {invalid('password') && <FieldError>{errors.password}</FieldError>}
                                 <Field>
                                     <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
                                     <Input
@@ -92,6 +100,7 @@ export default function Signup() {
                                         id="confirmPassword"
                                         autoComplete="on"
                                     />
+                                    {invalid('confirmPassword') && <FieldError>{errors.confirmPassword}</FieldError>}
                                 </Field>
                                 <Button type="submit">Continue</Button>
                                 <FieldDescription>

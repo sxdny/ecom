@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,23 +20,12 @@ class UserController extends Controller
     /**
      * Store a new user
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreUserRequest $request): RedirectResponse
     {
-        $user = new User;
+        $validated = $request->validated();
 
-        // Los inputs, all llegar aquí, ya deberían de haberse
-        // verificado en el frontend.
-        // Laravel Precognition
-        $user->first_name = $request->input('first_name') ? $request->input('first_name') : 'NDVP';
+        dd($validated);
 
-        $user->last_name = $request->input('last_name');
-        $user->email = $request->input('email');
-        $user->username = $request->input('username');
-        $user->password = $request->input('password');
-
-        dd($user);
-
-        // Redirect
         return redirect('/');
     }
 
