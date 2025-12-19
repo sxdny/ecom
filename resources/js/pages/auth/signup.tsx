@@ -10,7 +10,7 @@ export default function Signup() {
     /*
         Form helper con los valores por defecto.
     */
-    const { data, setData, post, processing, errors, validate, invalid } = useForm({
+    const { data, setData, post, errors, validate, invalid } = useForm({
         first_name: '',
         last_name: '',
         email: '',
@@ -106,7 +106,7 @@ export default function Signup() {
                                 <FieldDescription>
                                     Already have an account?
                                     <a href="login">
-                                        <Button className="px-1 underline" variant="link">
+                                        <Button type="button" className="px-1 underline" variant="link">
                                             Login
                                         </Button>
                                     </a>

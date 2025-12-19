@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -40,6 +41,32 @@ class UserController extends Controller
 
         return redirect('/');
     }
+
+    /**
+     * Login the user
+     */
+     public function login(LoginUserRequest $request)
+     {
+         // Using precognition, the values are already validated.
+         $validated = $request->validated();
+
+         // Hacemos un SELECT para ver si existe un usuario con esos campos
+         $username = $validated['username'];
+         $password = $validated['password'];
+
+         // Comprobamos primero si el usuario existe en la base de datos
+         if(DB::table('users')->get()->where('username', '=', $username)->first()) {
+             // Ahora, comprobamos que las contraseñas coinciden...
+             if(Hash::check($password, DB::table('users')->get()->where('username', '=', $username)->value('password'))) {
+                 dd("Welcome ".$username."!");
+                 // TODO: Aqui creamos un nuevo usuario y lo guardamos en la sesión.
+             } else {
+                 dd("The passwords do not match...");
+             }
+         } else {
+             dd("The user does not exist on our database...");
+         }
+     }
 
     /**
      * Display the specified resource.
