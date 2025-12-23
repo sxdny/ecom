@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\StoreUserRequest;
+use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -36,8 +38,6 @@ class UserController extends Controller
             'username' => $validated['username'],
             'password' => Hash::make($validated['password'])
         ]);
-        //dd(Hash::make($validated['password']));
-        //dd($validated);
 
         return redirect('/');
     }
@@ -50,30 +50,46 @@ class UserController extends Controller
          // Using precognition, the values are already validated.
          $validated = $request->validated();
 
-         // Hacemos un SELECT para ver si existe un usuario con esos campos
+         // Input del formulario
          $username = $validated['username'];
          $password = $validated['password'];
 
-         // Comprobamos primero si el usuario existe en la base de datos
-         if(DB::table('users')->get()->where('username', '=', $username)->first()) {
-             // Ahora, comprobamos que las contraseñas coinciden...
-             if(Hash::check($password, DB::table('users')->get()->where('username', '=', $username)->value('password'))) {
-                 dd("Welcome ".$username."!");
-                 // TODO: Aqui creamos un nuevo usuario y lo guardamos en la sesión.
-             } else {
-                 dd("The passwords do not match...");
-             }
+         // Hacemos un SELECT para ver si existe un usuario con esos campos
+         $user_password = DB::table('users')->get()->where('username', '=', $username)->value('password');
+         $user = Hash::check($password, $user_password) ? DB::table('users')->get()->where('username', '=', $username) : false;
+
+         if($user) {
+             // Guadamos el 'id' del usuario en la session.
+             // TODO: Buscar como guardarlo.
+             $request->session()->put('user_id', $user->value('id'));
+
+             route('dashboard');
          } else {
-             dd("The user does not exist on our database...");
+             dd("Yeah, the password is not correct...");
          }
+
+
      }
 
     /**
-     * Display the specified resource.
+     * Display the information about the user in the Dashboard.
      */
-    public function show(User $user)
+    public function show(Request $request)
     {
-        //
+        $session_user_id = $request->session()->get('user_id');
+
+        if($session_user_id) {
+            // We need to return the Dashboard with the user object
+            $user = DB::table('users')
+                ->select('first_name', 'last_name', 'username', 'email')
+                ->where('id', $session_user_id)
+                ->first();
+            return Inertia::render('dashboard', [
+                'user' => $user
+            ]);
+        } else {
+            return Inertia::render('dashboard');
+        }
     }
 
     /**
